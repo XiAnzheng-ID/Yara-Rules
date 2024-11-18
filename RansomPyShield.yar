@@ -6,9 +6,9 @@ rule RansomPyShield_Antiransomware {
     meta:
         author = "XiAnzheng"
         source_url = "https://github.com/XiAnzheng-ID/RansomPyShield-Antiransomware"
-        description = "Check for Suspicious import and string combination that Ransomware mostly abuse(can create FP)"
+        description = "Check for Suspicious String and Import combination that Ransomware mostly abuse(can create FP)"
         date = "2024-11-07"
-        updated = "2024-11-16"
+        updated = "2024-11-19"
         yarahub_license = "CC0 1.0"
         yarahub_uuid = "3295ce35-cb35-4203-bb37-7503ddf111c5"
         yarahub_rule_matching_tlp = "TLP:WHITE"
@@ -58,10 +58,10 @@ rule RansomPyShield_Antiransomware {
 		or pe.imports("ncrypt.dll")	
 		or pe.imports("crypt32.dll")
 
-        // Detect Dotnet Ransomware
-        or (any of them (
+        // Detect Dotnet Ransomware (Can Create FP)
+        or (any of them and (
             pe.imports("mscoree.dll") or dotnet.is_dotnet
-            )
+            ) 
         )
 
         // Token Leverages and File or Disk Enumeration 
