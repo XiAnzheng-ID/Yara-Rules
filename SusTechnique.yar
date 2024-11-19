@@ -8,7 +8,7 @@ rule Sus_Obf_Enc_Spoof_Hide_PE {
         source_url = "https://github.com/XiAnzheng-ID/Yara-Rules"
         description = "Check for Overlay, Obfuscating, Encrypting, Spoofing, Hiding, or Entropy Technique(can create FP)"
         date = "2024-11-18"
-        updated = "2024-11-19"
+        updated = "2024-11-20"
         yarahub_license = "CC0 1.0"
         yarahub_uuid = "fa466824-f124-45bc-8398-eaecef7271f9"
         yarahub_rule_matching_tlp = "TLP:WHITE"
@@ -21,7 +21,7 @@ rule Sus_Obf_Enc_Spoof_Hide_PE {
         (pe.number_of_imports == 0)
         or (pe.number_of_imports == 0 and pe.entry_point_raw == 0)
         or (pe.size_of_optional_header < 0xE0 or pe.size_of_optional_header > 0xF0)
-        or ((pe.number_of_exports != 0 and pe.number_of_imports == 0) or (pe.number_of_exports == 0 and pe.number_of_imports != 0))
+        or (pe.number_of_exports != 0 and pe.number_of_imports == 0)
 
         // Suspicious or Spoofed Section Headers Number
         or (pe.number_of_sections == 0 or pe.number_of_sections < 0 or pe.number_of_sections > 11)

@@ -8,7 +8,7 @@ rule RansomPyShield_Antiransomware {
         source_url = "https://github.com/XiAnzheng-ID/RansomPyShield-Antiransomware"
         description = "Check for Suspicious String and Import combination that Ransomware mostly abuse(can create FP)"
         date = "2024-11-07"
-        updated = "2024-11-19"
+        updated = "2024-11-20"
         yarahub_license = "CC0 1.0"
         yarahub_uuid = "3295ce35-cb35-4203-bb37-7503ddf111c5"
         yarahub_rule_matching_tlp = "TLP:WHITE"
@@ -45,8 +45,9 @@ rule RansomPyShield_Antiransomware {
         $dotnet12 = "AsymmetricAlgorithm" wide ascii
 
     condition:
+        (1 of ($tor*)) or (1 of ($string*))
         // Encryption Function Call (Can create FP)
-		(pe.imports("advapi32.dll", "CryptImportKey") and (pe.imports("advapi32.dll", "CryptEncrypt") or pe.imports("advapi32.dll", "CryptDecrypt")))
+		or (pe.imports("advapi32.dll", "CryptImportKey") and (pe.imports("advapi32.dll", "CryptEncrypt") or pe.imports("advapi32.dll", "CryptDecrypt")))
 		or (pe.imports("advapi32.dll", "CryptGenKey") and (pe.imports("advapi32.dll", "CryptEncrypt") or pe.imports("advapi32.dll", "CryptDecrypt"))) 
         or (pe.imports("advapi32.dll", "CryptAcquireContextA") and (pe.imports("advapi32.dll", "CryptGenRandom") or pe.imports("advapi32.dll", "CryptEncrypt"))) 
         or (pe.imports("advapi32.dll", "CryptAcquireContextW") and (pe.imports("advapi32.dll", "CryptGenRandom") or pe.imports("advapi32.dll", "CryptDecrypt"))) 
