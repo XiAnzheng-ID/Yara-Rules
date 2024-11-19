@@ -15,7 +15,6 @@ rule Sus_Obf_Enc_Spoof_Hide_PE {
         yarahub_rule_sharing_tlp = "TLP:WHITE"
         yarahub_reference_md5 = "ffea1266b09abbf0ceb59119746d8630"
 
-
     condition:
         // Missing or suspicious Import/Export tables combination
         (pe.number_of_imports == 0)
