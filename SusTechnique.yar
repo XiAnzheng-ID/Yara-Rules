@@ -8,7 +8,7 @@ rule Sus_Obf_Enc_Spoof_Hide_PE {
         source_url = "https://github.com/XiAnzheng-ID/Yara-Rules"
         description = "Check for Overlay, Obfuscating, Encrypting, Spoofing, Hiding, or Entropy Technique(can create FP)"
         date = "2024-11-18"
-        updated = "2024-11-20"
+        updated = "2024-11-21"
         yarahub_license = "CC0 1.0"
         yarahub_uuid = "fa466824-f124-45bc-8398-eaecef7271f9"
         yarahub_rule_matching_tlp = "TLP:WHITE"
@@ -34,8 +34,13 @@ rule Sus_Obf_Enc_Spoof_Hide_PE {
         // High Entropy Section (Could Be Compressed or using Packer, Can Create FP)
         or (math.entropy(0, filesize) > 7.25)
         
-        or (for any ent_sec in (0..pe.number_of_sections - 1): (
-                math.entropy(pe.sections[ent_sec].raw_data_offset, pe.sections[ent_sec].raw_data_offset + pe.sections[ent_sec].raw_data_size) > 7.25
-            )
+        or (for any var_sect in pe.sections: ( 
+	            ((var_sect.virtual_address <= pe.entry_point) and pe.entry_point < (var_sect.virtual_address + var_sect.virtual_size))
+	            and math.in_range( 
+		            math.entropy( 
+		            var_sect.raw_data_offset, var_sect.raw_data_size),
+		            7.8, 8.0
+                )
+		    )
         )
 }
