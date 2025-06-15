@@ -30,60 +30,6 @@ rule RansomPyShield_Antiransomware {
         $string9 = "monero" nocase wide ascii
         $string10 = "cryptocurrency" nocase wide ascii
 
-        // Detect DotNet Namespace Cryptography Function
-        $dotnet1 = "AES_Encrypt" wide ascii
-        $dotnet2 = "RijndaelManaged"  wide ascii
-        $dotnet3 = "SymmetricAlgorithm" wide ascii
-        $dotnet4 = "PaddingMode" wide ascii
-        $dotnet5 = "Rfc2898DeriveBytes" wide ascii
-        $dotnet6 = "DeriveBytes" wide ascii
-        $dotnet7 = "CipherMode" wide ascii
-        $dotnet8 = "CryptoStream" wide ascii
-        $dotnet9 = "CryptoStreamMode" wide ascii
-        $dotnet10 = "RSACryptoServiceProvider" wide ascii
-        $dotnet11 = "RSAEncryptionPadding" wide ascii
-        $dotnet12 = "AsymmetricAlgorithm" wide ascii
-
     condition:
-        (any of ($tor*)) or (any of ($string*))
-        
-        // Encryption Function Call (Can create FP)
-		or (pe.imports("advapi32.dll", "CryptImportKey") and (pe.imports("advapi32.dll", "CryptEncrypt") or pe.imports("advapi32.dll", "CryptDecrypt")))
-		or (pe.imports("advapi32.dll", "CryptGenKey") and (pe.imports("advapi32.dll", "CryptEncrypt") or pe.imports("advapi32.dll", "CryptDecrypt"))) 
-        or (pe.imports("advapi32.dll", "CryptAcquireContextA") and (pe.imports("advapi32.dll", "CryptGenRandom") or pe.imports("advapi32.dll", "CryptEncrypt"))) 
-        or (pe.imports("advapi32.dll", "CryptAcquireContextW") and (pe.imports("advapi32.dll", "CryptGenRandom") or pe.imports("advapi32.dll", "CryptDecrypt"))) 
-        or (pe.imports("advapi32.dll", "CryptGenRandom") and (pe.imports("advapi32.dll", "CryptEncrypt") or pe.imports("advapi32.dll", "CryptDecrypt") or pe.imports("advapi32.dll", "CryptGenKey")))
-        or (pe.imports("advapi32.dll", "CryptCreateHash") and pe.imports("advapi32.dll", "CryptHashData") and (pe.imports("advapi32.dll", "CryptDeriveKey") or pe.imports("advapi32.dll", "CryptImportKey") or pe.imports("advapi32.dll", "CryptDestroyHash")))
-        
-        // Using BCrypt , NCrypt , Crypt32 (Can create FP)
-		or pe.imports("bcrypt.dll") 
-		or pe.imports("ncrypt.dll")	
-		or pe.imports("crypt32.dll")
-
-        // Detect Dotnet Ransomware (Can Create FP)
-        or (any of them and (
-            pe.imports("mscoree.dll") or dotnet.is_dotnet
-            ) 
-        )
-
-        // Token Leverages and File or Disk Enumeration 
-        or (any of them and (
-                (pe.imports("kernel32.dll", "GetVolumeInformationW") or pe.imports("kernel32.dll", "GetVolumeInformationA"))
-                or ((pe.imports("advapi32.dll", "AdjustTokenPrivileges") or pe.imports("advapi32.dll", "GetTokenInformation") or pe.imports("advapi32.dll", "CheckTokenMembership")) and (pe.imports("kernel32.dll", "DeleteFileA") or pe.imports("kernel32.dll", "DeleteFileW") or pe.imports("kernel32.dll", "FindFirstVolumeW") or pe.imports("kernel32.dll", "FindNextVolumeW") or pe.imports("kernel32.dll", "GetVolumeInformationW") or pe.imports("kernel32.dll", "GetVolumeInformationA")))
-            )
-        ) 
-        
-		// Malware or Ransomware that evade import scan by importing required module on runtime
-		or (any of them and (
-                ((pe.imports("kernel32.dll", "GetVolumeInformationW") or pe.imports("kernel32.dll", "GetVolumeInformationA")) and (pe.imports("kernel32.dll", "DeleteFileA") or pe.imports("kernel32.dll", "DeleteFileW")))
-		        or (pe.imports("kernel32.dll", "LoadLibraryExW") and pe.imports("kernel32.dll", "LoadLibraryA") and (pe.imports("kernel32.dll", "DeleteFileA") or pe.imports("kernel32.dll", "DeleteFileW")))
-                or (pe.imports("kernel32.dll", "LoadLibraryExA") and pe.imports("kernel32.dll", "LoadLibraryW") and (pe.imports("kernel32.dll", "DeleteFileA") or pe.imports("kernel32.dll", "DeleteFileW")))
-            )
-        )
-
-        // Network and Net File Access with uncommon call combination
-        or ((pe.imports("netapi32.dll", "NetShareEnum") or pe.imports("mpr.dll", "WNetEnumResourceW") or pe.imports("mpr.dll", "WNetOpenEnumW")) and (pe.imports("advapi32.dll", "CryptGenRandom") or pe.imports("advapi32.dll", "CryptEncrypt") or pe.imports("advapi32.dll", "CryptDecrypt") or pe.imports("advapi32.dll", "CryptHashData") or pe.imports("advapi32.dll", "AdjustTokenPrivileges") or pe.imports("advapi32.dll", "GetTokenInformation") or pe.imports("advapi32.dll", "CheckTokenMembership")))
-
-        // Undocumented ntdll call that can cause a BSOD (potential for disk locker or wiper)
-        or pe.imports("ntdll.dll", "NtRaiseHardError")
+		any of them
 }
