@@ -32,7 +32,7 @@ rule Sus_Obf_Enc_Spoof_Hide_PE {
         or (pe.size_of_headers < 0x200 or pe.size_of_headers > 0x400)
 
         // High Entropy Section (Could Be Compressed or using Packer, Can Create FP)
-        or (math.entropy(0, filesize) > 7.25)
+        or (pe.is_pe and (math.entropy(0, filesize) > 7.25))
         
         or (for any var_sect in pe.sections: ( 
 	            ((var_sect.virtual_address <= pe.entry_point) and pe.entry_point < (var_sect.virtual_address + var_sect.virtual_size))
