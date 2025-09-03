@@ -16,31 +16,33 @@ rule Sus_Obf_Enc_Spoof_Hide_PE {
         yarahub_reference_md5 = "ffea1266b09abbf0ceb59119746d8630"
 
     condition:
-        // Missing or suspicious Import/Export tables combination
-        (pe.number_of_imports == 0)
-        or (pe.number_of_imports == 0 and pe.entry_point_raw == 0)
-        or (pe.size_of_optional_header < 0xE0 or pe.size_of_optional_header > 0xF0)
-        or (pe.number_of_exports != 0 and pe.number_of_imports == 0)
+        pe.is_pe and (
+            // Missing or suspicious Import/Export tables combination
+            (pe.number_of_imports == 0)
+            or (pe.number_of_imports == 0 and pe.entry_point_raw == 0)
+            or (pe.size_of_optional_header < 0xE0 or pe.size_of_optional_header > 0xF0)
+            or (pe.number_of_exports != 0 and pe.number_of_imports == 0)
 
-        // Suspicious or Spoofed Section Headers Number
-        or (pe.number_of_sections == 0 or pe.number_of_sections < 0 or pe.number_of_sections > 11)
+            // Suspicious or Spoofed Section Headers Number
+            or (pe.number_of_sections == 0 or pe.number_of_sections < 0 or pe.number_of_sections > 11)
 
-        // Contain Overlay File (Can create FP)
-        or (pe.overlay.size > 0)
+            // Contain Overlay File (Can create FP)
+            or (pe.overlay.size > 0)
 
-        // Invalid PE Header
-        or (pe.size_of_headers < 0x200 or pe.size_of_headers > 0x400)
+            // Invalid PE Header
+            or (pe.size_of_headers < 0x200 or pe.size_of_headers > 0x400)
 
-        // High Entropy Section (Could Be Compressed or using Packer, Can Create FP)
-        or (pe.is_pe and (math.entropy(0, filesize) > 7.25))
-        
-        or (for any var_sect in pe.sections: ( 
-	            ((var_sect.virtual_address <= pe.entry_point) and pe.entry_point < (var_sect.virtual_address + var_sect.virtual_size))
-	            and math.in_range( 
-		            math.entropy( 
-		            var_sect.raw_data_offset, var_sect.raw_data_size),
-		            7.8, 8.0
+            // High Entropy Section (Could Be Compressed or using Packer, Can Create FP)
+            or (math.entropy(0, filesize) > 7.25)
+            
+            or (for any var_sect in pe.sections: ( 
+                    ((var_sect.virtual_address <= pe.entry_point) and pe.entry_point < (var_sect.virtual_address + var_sect.virtual_size))
+                    and math.in_range( 
+                        math.entropy( 
+                        var_sect.raw_data_offset, var_sect.raw_data_size),
+                        7.8, 8.0
+                    )
                 )
-		    )
+            )
         )
 }
