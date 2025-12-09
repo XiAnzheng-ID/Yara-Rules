@@ -14,21 +14,25 @@ rule Sus_CMD_Powershell_Usage
 
     strings:
         //Powershell Usage
-        $ps1 = "-ExecutionPolicy Bypass" ascii wide nocase
-        $ps2 = "-Ex Bypass" ascii wide nocase
-        $ps3 = "Invoke-Expression" ascii wide nocase
-        $ps4 = "IEX " ascii wide nocase
-        $ps5 = ");IEX " ascii wide nocase
-        $ps6 = "IEX;" ascii wide nocase
-        $ps7 = "FromBase64String" ascii wide nocase
+        $ps1 = "Set-ExecutionPolicy Bypass" ascii wide nocase
+		$ps2 = "-ExecutionPolicy Bypass" ascii wide nocase
+        $ps3 = "-Ex Bypass" ascii wide nocase
+		$ps4 = "-w 1" ascii wide nocase
+		$ps5 = "-WindowStyle Hidden" ascii wide nocase
+        $ps6 = "Invoke-Expression" ascii wide nocase
+        $ps7 = "IEX " ascii wide nocase
+        $ps8 = ");IEX " ascii wide nocase
+        $ps9 = "IEX;" ascii wide nocase
+        $ps10 = "FromBase64String" ascii wide nocase
+		$ps11 = "%comspec%" ascii wide nocase
 
         //Possibly Encoded/Obfuscated command
-        $obf1 = /-join\s*/ ascii wide nocase
-        $obf2 = /-nop\s*/ ascii wide nocase
-        $obf3 = /-replace\s*/ ascii wide nocase
-        $obf4 = /\[char\]\d+/ ascii wide nocase  
-        $obf5 = /fromcharcode/ ascii wide nocase
-        $obf8 = /[a-z]{3,10}\:\/\/[a-z0-9\.\/\=\%\:\_]{30,}/ ascii wide nocase
+        $obf1 = /-join\s*/ 
+        $obf2 = /-nop\s*/ 
+        $obf3 = /-replace\s*/ 
+        $obf4 = /\[char\]\d+/ 
+        $obf5 = /fromcharcode/ 
+        $obf8 = /[a-z]{3,10}\:\/\/[a-z0-9\.\/\=\%\:\_]{30,}/
 
         //Windef
         $def1= "MpPreference" ascii wide nocase
@@ -52,12 +56,14 @@ rule Sus_CMD_Powershell_Usage
         $util6 = "reg add HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System /v DisableCMD" ascii wide nocase
         $util7 = "reg add HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System /v DisableRegistryTools" ascii wide nocase
         $util8 = "taskkill /f" ascii wide nocase
-        $util9 = "explorer.exe" ascii wide nocase
-        $util10 = "rundll32" ascii wide nocase
-        $util11 = /(exe\.|\.exe)[a-z]{5,10}\./ ascii wide nocase
-        $util12 = /exe\.[a-z]{6,10}/ ascii wide nocase
-        $util13 = /\[reflection\.assembly\]::load\s*/ ascii wide nocase
-        $util14 = /start-process\s*-windowstyle\s*hidden/ ascii wide nocase
+		$util9 = "Start-Process" ascii wide nocase
+        $util10 = "explorer.exe" ascii wide nocase
+        $util11 = "rundll32" ascii wide nocase
+		$util12 = "wevutil" ascii wide nocase
+        $util13 = /(exe\.|\.exe)[a-z]{5,10}\./ ascii wide nocase
+        $util14 = /exe\.[a-z]{6,10}/ ascii wide nocase
+        $util15 = /\[reflection\.assembly\]::load\s*/ ascii wide nocase
+        $util16 = /start-process\s*-windowstyle\s*hidden/ ascii wide nocase
 
         // Probably a Downloader
         $powershell1 = "Powershell" ascii wide nocase

@@ -40,7 +40,7 @@ rule Sus_Obf_Enc_Spoof_Hide_PE {
                     and math.in_range( 
                         math.entropy( 
                         var_sect.raw_data_offset, var_sect.raw_data_size),
-                        7.8, 8.0
+                        7.65, 8.0
                     )
                 )
             )
